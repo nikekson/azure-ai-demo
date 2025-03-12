@@ -1,6 +1,7 @@
 import { api } from "@/lib/api";
 import { fileToArrayBuffer } from "@/lib/util/array-buffer";
 import { BlockBlobClient } from "@azure/storage-blob";
+import { nanoid } from "nanoid";
 
 type ApiSasResponse = {
   url: string;
@@ -45,7 +46,7 @@ export default function App() {
 
   const uploadFile = async (file: File) => {
     try {
-      const filename = file.name;
+      const filename = nanoid();
 
       const sasUrl = await getSasUrl(filename);
       console.log(sasUrl);
