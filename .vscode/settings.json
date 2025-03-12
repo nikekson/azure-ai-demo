@@ -8,5 +8,5 @@
   "azureFunctions.preDeployTask": "npm prune (functions)",
   "typescript.preferences.importModuleSpecifier": "non-relative",
   "javascript.preferences.importModuleSpecifier": "non-relative",
-  "azurite.location": ".azurite"
+  "azurite.location": "api/.azurite"
 }
