@@ -6,6 +6,11 @@ type ApiSasResponse = {
   url: string;
 };
 
+type ApiDescribeResponse = {
+  caption: string;
+  confidence: number ;
+};
+
 const STORAGE_CONTAINER_NAME = import.meta.env.VITE_STORAGE_CONTAINER_NAME;
 
 async function getSasUrl(filename: string): Promise<string> {
@@ -26,6 +31,18 @@ async function getSasUrl(filename: string): Promise<string> {
 }
 
 export default function App() {
+  const testDescribe = async (filename: string) => {
+      const captionData = (await api.post('/api/describe', {}, {
+        params: {
+          file: filename,
+          container: STORAGE_CONTAINER_NAME,
+        }
+      })).data as ApiDescribeResponse;
+
+      console.log('caption:', captionData.caption);
+      console.log('confidence:', captionData.confidence);
+  };
+
   const uploadFile = async (file: File) => {
     try {
       const filename = file.name;
@@ -42,6 +59,8 @@ export default function App() {
       } else {
         console.log('success');
       }
+
+      await testDescribe(filename);
     } catch (error) {
       console.error(error);
     }
