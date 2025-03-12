@@ -1,5 +1,6 @@
 import { api } from "@/lib/api";
-import { useEffect } from "react";
+import { fileToArrayBuffer } from "@/lib/util/array-buffer";
+import { BlockBlobClient } from "@azure/storage-blob";
 
 type ApiSasResponse = {
   url: string;
@@ -25,11 +26,37 @@ async function getSasUrl(filename: string): Promise<string> {
 }
 
 export default function App() {
-  useEffect(() => {
-    getSasUrl('testfile')
-      .then(url => console.log(url))
-      .catch(console.error);
-  }, []);
+  const uploadFile = async (file: File) => {
+    try {
+      const filename = file.name;
 
-  return (<></>);
+      const sasUrl = await getSasUrl(filename);
+      console.log(sasUrl);
+
+      const arrayBuffer = await fileToArrayBuffer(file);
+      const blockBlobClient = new BlockBlobClient(sasUrl);
+      const result = await blockBlobClient.uploadData(arrayBuffer);
+
+      if (result.errorCode) {
+        console.error(`error code: ${result.errorCode}`);
+      } else {
+        console.log('success');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      await uploadFile(file);
+    }
+  }
+
+  return (
+    <div>
+      <input type="file" onChange={handleFileChange} />
+    </div>
+  );
 }
