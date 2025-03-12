@@ -17,7 +17,7 @@ async function getGenerateSasToken(
     const filename = request.query.get('file');
     const permissions = request.query.get('permission');
     const defaultTimeRangeMins = '10';
-    const timeRangeMins = parseIntSafe(request.query.get('timerange') ?? defaultTimeRangeMins);
+    const timeRangeMins = parseIntSafe(request.query.get('timerangeMins') ?? defaultTimeRangeMins);
 
     if (!containerName || !filename || !permissions || !timeRangeMins) {
       return { status: 400 };
