@@ -16,6 +16,8 @@ type AcceptType = {
   mime: string;
 };
 
+type Description = ApiDescribeResponse;
+
 enum AppState {
   Idle,
   Uploading,
@@ -25,7 +27,7 @@ enum AppState {
 export default function App() {
   const [preview, setPreview] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [caption, setCaption] = useState('');
+  const [description, setDescription] = useState<Description | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const filenameRef = useRef<string>(nanoid());
   const [sasUrl, setSasUrl] = useState('');
@@ -49,7 +51,6 @@ export default function App() {
       })).data as ApiSasResponse;
 
       setSasUrl(url);
-      console.log(`sas url: ${url}`);
     } catch (error) {
       console.error(error);
     }
@@ -90,8 +91,7 @@ export default function App() {
         }
       })).data as ApiDescribeResponse;
 
-      setCaption(captionData.caption);
-      console.log('confidence:', captionData.confidence);
+      setDescription(captionData);
     } catch (error) {
       console.error(error);
     } finally {
@@ -128,7 +128,7 @@ export default function App() {
   };
 
   const removeImage = () => {
-    setCaption('');
+    setDescription(null);
     if (preview) {
       URL.revokeObjectURL(preview);
       setPreview(null);
@@ -199,10 +199,15 @@ export default function App() {
           </Card>
 
           <div className="relative rounded-md bg-muted p-3 text-center">
-            <p className="font-medium uppercase tracking-wider min-h-[1lh]">
+            <p className="font-medium uppercase tracking-wider min-h-[1lh] flex flex-col">
               {appState === AppState.Idle && (
-                caption ? (
-                  <span>{caption}</span>
+                description ? (
+                  <>
+                    <span>{description.caption}</span>
+                    <span className="mt-1 text-xs text-muted-foreground">
+                      Confidence: {(description.confidence * 100).toFixed(1)}%
+                    </span>
+                  </>
                 ) : (
                   <span className="text-xs text-muted-foreground">Upload an image to get a description</span>
                 )
