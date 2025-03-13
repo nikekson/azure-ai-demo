@@ -7,7 +7,7 @@ import { ApiDescribeResponse, ApiSasResponse } from "@/types/api";
 import { BlockBlobClient } from "@azure/storage-blob";
 import { Lightbulb, Upload, X } from "lucide-react";
 import { nanoid } from "nanoid";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 const STORAGE_CONTAINER_NAME = import.meta.env.VITE_STORAGE_CONTAINER_NAME;
 
