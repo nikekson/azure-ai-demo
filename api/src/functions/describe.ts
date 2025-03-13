@@ -1,7 +1,6 @@
-import createClient, { ImageAnalysisResultOutput } from '@azure-rest/ai-vision-image-analysis';
-import { AzureKeyCredential } from '@azure/core-auth';
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
-import { addDescription, DescriptionEntity, getBlobContentMD5, getDescription } from '../lib/azure-storage';
+import { addDescription, DescriptionEntity, getBlobContentMD5, getBlobUrl, getDescription } from '../lib/azure-storage';
+import { getImageCaption } from '../lib/azure-ai';
 
 async function describe(
   request: HttpRequest,
@@ -41,21 +40,8 @@ async function describe(
       };
     }
 
-    const credential = new AzureKeyCredential(ComputerVisionKey);
-    const computerVisionEndpoint = `https://${ComputerVisionName}.cognitiveservices.azure.com`;
-    const client = createClient(computerVisionEndpoint, credential);
-
-    const features = [
-      'Caption',
-    ];
-
-    const imageUrl = `https://${StorageAccountName}.blob.core.windows.net/${containerName}/${filename}`;
-
-    const result = (await client.path('/imageanalysis:analyze').post({
-      body: { url: imageUrl },
-      queryParameters: { features },
-      contentType: 'application/json',
-    })).body as ImageAnalysisResultOutput;
+    const imageUrl = getBlobUrl(StorageAccountName, containerName, filename);
+    const result = await getImageCaption(ComputerVisionName, ComputerVisionKey, imageUrl);
 
     const caption = result.captionResult.text;
     const confidence = result.captionResult.confidence;

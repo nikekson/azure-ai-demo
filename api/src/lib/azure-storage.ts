@@ -119,6 +119,14 @@ export async function generateSASUrl(
   return accountSasTokenUrl;
 }
 
+export function getBlobUrl(
+  serviceName: string,
+  containerName: string,
+  filename: string
+): string {
+  return `https://${serviceName}.blob.core.windows.net/${containerName}/${filename}`;
+}
+
 export async function getDescription(
   serviceName: string,
   serviceKey: string,
