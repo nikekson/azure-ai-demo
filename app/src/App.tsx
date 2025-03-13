@@ -131,6 +131,17 @@ export default function App() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-4 md:p-24">
+        <a href="https://github.com/nikekson/azure-ai-demo">
+          <img
+            loading="lazy"
+            decoding="async"
+            width="149"
+            height="149"
+            src="https://github.blog/wp-content/uploads/2008/12/forkme_right_darkblue_121621.png"
+            className="absolute right-0 top-0"
+            alt="Fork me on GitHub"
+          />
+        </a>
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
           <h1 className="text-2xl font-bold tracking-tight">Describe Image</h1>
