@@ -203,7 +203,7 @@ export default function App() {
                     </span>
                   </>
                 ) : (
-                  <span className="text-xs text-muted-foreground">Upload an image to get a description</span>
+                  <span className="text-xs text-muted-foreground mt-1">Upload an image to get a description</span>
                 )
               )}
 
