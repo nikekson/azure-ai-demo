@@ -30,7 +30,6 @@ export default function App() {
   const [description, setDescription] = useState<Description | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const filenameRef = useRef<string>(nanoid());
-  const [sasUrl, setSasUrl] = useState('');
   const [appState, setAppState] = useState(AppState.Idle);
 
   const acceptTypes: AcceptType[] = [
@@ -38,10 +37,9 @@ export default function App() {
     { name: 'PNG', mime: 'image/png' },
   ];
 
-  const fetchSasUrl = async (filename: string, controller: AbortController) => {
+  const getSasUrl = async (filename: string): Promise<string> => {
     try {
       const { url } = (await api.post('/api/sas', {}, {
-        signal: controller.signal,
         params: {
           file: filename,
           permission: 'w',
@@ -50,21 +48,17 @@ export default function App() {
         }
       })).data as ApiSasResponse;
 
-      setSasUrl(url);
+      return url;
     } catch (error) {
-      console.error(error);
+      throw error;
     }
   };
-
-  useEffect(() => {
-    const controller = new AbortController();
-    fetchSasUrl(filenameRef.current, controller);
-    return () => controller.abort();
-  }, []);
 
   const upload = async (file: File) => {
     try {
       setAppState(AppState.Uploading);
+
+      const sasUrl = await getSasUrl(filenameRef.current);
 
       const arrayBuffer = await fileToArrayBuffer(file);
       const blockBlobClient = new BlockBlobClient(sasUrl);
