@@ -93,13 +93,26 @@ export default function App() {
     }
   };
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setPreview(URL.createObjectURL(file));
-      await upload(file);
-      await describe();
+  const setImage = async (file?: File) => {
+    if (!file) {
+      return;
     }
+
+    setPreview(URL.createObjectURL(file));
+    await upload(file);
+    await describe();
+  }
+
+  const removeImage = () => {
+    setDescription(null);
+    if (preview) {
+      URL.revokeObjectURL(preview);
+      setPreview(null);
+    }
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    await setImage(e.target.files?.[0]);
   };
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -111,22 +124,11 @@ export default function App() {
     setIsDragging(false);
   };
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+  const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
 
-    const file = e.dataTransfer.files[0];
-    if (file?.type.startsWith("image/")) {
-      setPreview(URL.createObjectURL(file));
-    }
-  };
-
-  const removeImage = () => {
-    setDescription(null);
-    if (preview) {
-      URL.revokeObjectURL(preview);
-      setPreview(null);
-    }
+    await setImage(e.dataTransfer.files[0]);
   };
 
   return (
