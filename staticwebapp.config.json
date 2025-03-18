@@ -1,8 +1,13 @@
 {
   "routes": [
     {
-      "route": "/*",
-      "redirect": "https://google.com"
+      "route": "/",
+      "redirect": "https://google.com",
+      "statusCode": 301,
+      "allowedRoles": [
+        "anonymous",
+        "authenticated"
+      ]
     }
   ]
 }
